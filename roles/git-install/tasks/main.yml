@@ -1,0 +1,5 @@
+---
+# Tasks File For git-install Role
+
+- name: Installing Git And Its Dependencies
+  yum: name=git state=installed

@@ -1,0 +1,18 @@
+---
+# handlers file for apache_install_and_deploy
+
+- name: Restart httpd
+  service:
+    name:   httpd
+    state:  restarted
+  when: ansible_os_family == "RedHat"
+
+
+- name: Restart apache2
+  service: 
+    name:  apache2
+    state: restarted
+  when: ansible_os_family != "RedHat"
+
+
+...

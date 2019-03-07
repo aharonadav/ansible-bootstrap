@@ -1,0 +1,17 @@
+---
+# tasks file for iptables-flush
+- name: Installing iptables With YUM
+  yum:
+    name: iptables
+    state: latest
+  when: ansible_os_family == "RedHat" 
+
+- name: Installing iptables With APT
+  apt:
+    name: iptables
+    state: latest
+  when: ansible_os_family != "RedHat"
+
+- name: Flushing Existing Firewall Rules
+  iptables:
+    flush: true

@@ -1,0 +1,70 @@
+---
+# tasks file for apache_install
+    
+                                                  # ===== "YUM"-based OS =====
+- block:
+  - name: Updating OS Before New Installations
+    yum:
+      name:  '*'
+      state: latest
+
+  - name: Installing Apache with YUM
+    yum:
+      name:   httpd
+      state:  latest
+
+  - name: Starting Apache and Enabling On Boot
+    service:
+      name:    httpd
+      state:   started
+      enabled: yes
+
+  when: ansible_os_family == "RedHat"
+
+                                                 # ===== "APT"-based OS =====
+- block:
+  - name: Updating OS Before New Installations
+    apt:
+      name:          '*'
+      state:         latest
+      force_apt_get: yes
+
+  - name: Installing Apache with APT
+    apt:
+      name:   apache2
+      state:  latest
+        
+  - name: Starting Apache and Enabling On Boot
+    service:
+      name:    apache2
+      state:   started
+      enabled: yes
+  when: ansible_os_family != "RedHat"
+
+
+
+                                                  #  ===== Delievering To Server =====
+- name: Copying Files To Server
+  copy:
+    src:  "{{ item }}"
+    dest: "{{ dest_fldr }}"
+    mode:  0555
+  with_fileglob:
+    "*.*"
+  notify:
+    - Restart httpd
+    - Restart apache2
+
+- name: Generating index.html From Template And Delievering To Server
+  template:
+    src: "index.j2"
+    dest: "{{ dest_fldr }}/index.html"
+    mode: 0555
+
+  notify:
+    - Restart httpd
+    - Restart apache2
+
+
+
+...                                            
